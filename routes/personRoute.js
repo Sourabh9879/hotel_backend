@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router();
-const Person = require('./../models/person')
+const Person = require('../models/Person')
 
 
-router.post('/person',async (req,res) => {
+router.post('/',async (req,res) => {
     try{
       const data = req.body;
       const newPerson = new Person(data);
@@ -18,7 +18,7 @@ router.post('/person',async (req,res) => {
     }
   })
 
-  router.get('/person',async (req,res) =>{
+  router.get('/',async (req,res) =>{
 
     try {
       const data = await Person.find();
@@ -31,7 +31,7 @@ router.post('/person',async (req,res) => {
     }
     })
 
-    router.get('/person/:workType', async (req,res) => {
+    router.get('/:workType', async (req,res) => {
         try {
       // it will extract work from URL parameter
           const workType = req.params.workType;
