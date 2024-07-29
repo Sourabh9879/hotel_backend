@@ -49,3 +49,5 @@ router.post('/',async (req,res) => {
           res.status(500).json(err,"internal server error")
         }
       })
+
+      module.exports = router;
