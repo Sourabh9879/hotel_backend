@@ -4,6 +4,7 @@ const db = require('./db')
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json());
+require('dotenv').config();
 
 app.get('/', function (req, res) {
   res.send('welcome to mode restaurant')
@@ -15,6 +16,8 @@ app.use('/person',personRoute)
 const menuRoute = require('./routes/menuRoute')
 app.use('/menu',menuRoute)
 
-app.listen(3000,()=>{
+const PORT = process.env.PORT || 3000
+
+app.listen(PORT,()=>{
   console.log("server running on port 3000");
 })
