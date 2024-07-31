@@ -6,7 +6,11 @@ const bodyParser = require('body-parser')
 app.use(bodyParser.json());
 require('dotenv').config();
 
-app.get('/', function (req, res) {
+const logRequest = (req,res,next) => {
+  console.log(`Request: [${new Date().toLocaleString()}] ${req.url}`);
+  next();
+}
+app.get('/', logRequest ,function (req, res) {
   res.send('welcome to mode restaurant')
 })
 
