@@ -1,24 +1,33 @@
-const express = require('express')
-const app = express()
-const db = require('./db')
-
-const bodyParser = require('body-parser')
-app.use(bodyParser.json());
+const express = require('express');
+const app = express();
+const db = require('./db');
 require('dotenv').config();
+const passport = require('./auth')
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
-const logRequest = (req,res,next) => {
-  console.log(`Request: [${new Date().toLocaleString()}] ${req.url}`);
-  next();
-}
-app.get('/', logRequest ,function (req, res) {
+ const logRequest = (req,res,next) => {
+   console.log(`[${new Date().toLocaleString()}] Request made through :${req.url}`);
+   next();
+ }
+
+ app.use(logRequest);
+ 
+// Authentication login here
+ 
+
+ app.use(passport.initialize());
+const passAuth = passport.authenticate('local', {session : false});
+
+app.get('/',function (req, res) {
   res.send('welcome to mode restaurant')
 })
 
 const personRoute = require('./routes/personRoute')
-app.use('/person',personRoute)
-
 const menuRoute = require('./routes/menuRoute')
-app.use('/menu',menuRoute)
+
+app.use('/person' ,personRoute)
+app.use('/menu', passAuth ,menuRoute)
 
 const PORT = process.env.PORT || 3000
 
