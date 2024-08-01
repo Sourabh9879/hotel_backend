@@ -10,11 +10,7 @@ app.use(bodyParser.json());
    console.log(`[${new Date().toLocaleString()}] Request made through :${req.url}`);
    next();
  }
-
  app.use(logRequest);
- 
-// Authentication login here
- 
 
  app.use(passport.initialize());
 const passAuth = passport.authenticate('local', {session : false});
@@ -26,8 +22,8 @@ app.get('/',function (req, res) {
 const personRoute = require('./routes/personRoute')
 const menuRoute = require('./routes/menuRoute')
 
-app.use('/person' ,personRoute)
-app.use('/menu', passAuth ,menuRoute)
+app.use('/person' , passAuth ,personRoute)
+app.use('/menu' ,menuRoute)
 
 const PORT = process.env.PORT || 3000
 
