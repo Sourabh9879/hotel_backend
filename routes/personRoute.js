@@ -1,16 +1,27 @@
 const express = require('express')
 const router = express.Router();
 const Person = require('../models/Person')
+const  { jwtAuthmiddleware , generateToken } = require('./../jwt');
 
-
-router.post('/',async (req,res) => {
+// POST route to add a person
+router.post('/signup',async (req,res) => {
     try{
       const data = req.body;
+      // create a new person document using the response model
       const newPerson = new Person(data);
-    
+    // save the new person to the database
       const response = await newPerson.save()
         console.log("data saved")
-        res.status(200).json(response);
+
+        const payload = {
+          id: response.id,
+          username: response.username
+        }
+
+        console.log(JSON.stringify(payload));
+        const token  = generateToken(payload);
+        console.log("token is : ", token);
+        res.status(200).json({response : response, token : token});
         
      }catch(err){
       console.log(err)
@@ -18,7 +29,50 @@ router.post('/',async (req,res) => {
     }
   })
 
-  router.get('/',async (req,res) =>{
+  // login route
+
+  router.post('/login', async(req, res) => {
+    try{
+        // Extract username and password from request body
+        const {username, password} = req.body;
+
+        // Find the user by username
+        const user = await Person.findOne({username: username});
+
+        // If user does not exist or password does not match, return error
+        if( !user || !(await user.comparePassword(password))){
+            return res.status(401).json({error: 'Invalid username or password'});
+        }
+
+        // generate Token 
+        const payload = {
+            id: user.id,
+            username: user.username
+        }
+        const token = generateToken(payload);
+
+        // resturn token as response
+        res.json({token})
+    }catch(err){
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+// Profile route
+  router.get('/profile', jwtAuthmiddleware , async (req,res) =>{
+    try {
+      const userData = req.user;
+      console.log("user data ", userData);
+
+      const userID = userData.id;
+      const user = await Person.findById(userID);
+    } catch (error) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  })
+  // GET method to get person
+  router.get('/',jwtAuthmiddleware,async (req,res) =>{
 
     try {
       const data = await Person.find();

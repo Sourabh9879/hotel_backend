@@ -22,7 +22,7 @@ app.get('/',function (req, res) {
 const personRoute = require('./routes/personRoute')
 const menuRoute = require('./routes/menuRoute')
 
-app.use('/person' , passAuth ,personRoute)
+app.use('/person' ,personRoute)
 app.use('/menu' ,menuRoute)
 
 const PORT = process.env.PORT || 3000
